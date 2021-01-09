@@ -10,11 +10,9 @@ use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem
 use balz::entities;
 
 fn main() {
-    let ref mut window = Window::new("asdf");
+    let window = Rc::new(RefCell::new(Window::new("asdf")));
     // let mut camera = kiss3d::planar_camera::FixedView::new();
-    window.set_light(Light::StickToCamera);
-
-    let window = Rc::new(RefCell::new(window));
+    window.borrow_mut().set_light(Light::StickToCamera);
 
     let ref mut world = World::new();
     world.insert(GameState::new());
@@ -24,7 +22,7 @@ fn main() {
         .with(EntityCreatorSystem, "entites", &["events"])
         .with(PhysicsSystem::default(), "physics", &["entites"])
         .with_thread_local(InputSystem::new(
-            Rc::clone(&window),
+            Rc::clone( &window),
         ))
         .with_thread_local(RenderingSystem::new(
             Rc::clone(&window),

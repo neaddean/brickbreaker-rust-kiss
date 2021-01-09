@@ -8,14 +8,14 @@ use specs::{System, Write};
 use crate::resources::EventQueue;
 use crate::systems::event_types::Event::{KeyDown, KeyUp};
 
-pub struct InputSystem<'a> {
-    window: Rc<RefCell<&'a mut Window>>,
+pub struct InputSystem {
+    window: Rc<RefCell<Window>>,
     last_pressed: Option<Key>,
 }
 
-impl<'a> InputSystem<'a> {
+impl InputSystem {
     pub fn new(
-        window: Rc<RefCell<&'a mut Window>>,
+        window: Rc<RefCell<Window>>,
     ) -> Self {
         InputSystem {
             window,
@@ -24,7 +24,7 @@ impl<'a> InputSystem<'a> {
     }
 }
 
-impl<'a> System<'a> for InputSystem<'_> {
+impl<'a> System<'a> for InputSystem {
     type SystemData = Write<'a, EventQueue>;
 
     fn run(&mut self, data: Self::SystemData) {

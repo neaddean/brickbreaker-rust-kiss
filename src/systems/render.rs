@@ -1,7 +1,5 @@
 use std::cell::RefCell;
-
 use std::rc::Rc;
-
 
 use kiss3d::window::Window;
 use specs::{Read, ReadStorage, System, WriteExpect};
@@ -9,14 +7,14 @@ use specs::{Read, ReadStorage, System, WriteExpect};
 use crate::components::*;
 use crate::resources;
 
-pub struct RenderingSystem<'a> {
-    window: Rc<RefCell<&'a mut Window>>,
+pub struct RenderingSystem {
+    window: Rc<RefCell<Window>>,
     accum: f32,
 }
 
-impl<'a> RenderingSystem<'a> {
+impl RenderingSystem {
     pub fn new(
-        window: Rc<RefCell<&'a mut Window>>,
+        window: Rc<RefCell<Window>>,
     ) -> Self {
         RenderingSystem {
             window,
@@ -25,7 +23,7 @@ impl<'a> RenderingSystem<'a> {
     }
 }
 
-impl<'a> System<'a> for RenderingSystem<'_> {
+impl<'a> System<'a> for RenderingSystem {
     type SystemData = (
         ReadStorage<'a, Position>,
         ReadStorage<'a, Renderable>,
@@ -37,9 +35,10 @@ impl<'a> System<'a> for RenderingSystem<'_> {
         let (_positions,
             _renderables,
             _asset_cache,
-            game_state,
+            mut game_state,
         ) = data;
 
+        let ref mut window = self.window.borrow_mut();
         if game_state.sw_frame_limiter {
             self.accum += game_state.this_duration().as_secs_f32();
         } else {
@@ -47,6 +46,7 @@ impl<'a> System<'a> for RenderingSystem<'_> {
         }
         while self.accum >= 1.0 / game_state.sw_frame_limit_fps {
             self.accum -= 1.0 / game_state.sw_frame_limit_fps;
+            game_state.continuing = window.render();
         }
     }
 }
