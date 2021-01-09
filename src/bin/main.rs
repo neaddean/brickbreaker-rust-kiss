@@ -5,24 +5,32 @@ use kiss3d::light::Light;
 use kiss3d::window::Window;
 use specs::{DispatcherBuilder, World, WorldExt};
 
-use balz::resources::{GameState, EntityQueue, AssetCache};
-use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
 use balz::entities;
+use balz::resources::{AssetCache, EntityQueue, GameState};
+use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
+use std::borrow::Borrow;
 
 fn main() {
-    let window = Rc::new(RefCell::new(Window::new("asdf")));
+    let window = Window::new("asdf");
+    let window = Rc::new(RefCell::new(window));
     // let mut camera = kiss3d::planar_camera::FixedView::new();
-    window.borrow_mut().set_light(Light::StickToCamera);
+    {
+        let mut window_l = window.borrow_mut();
+        // window_l.set_light(Light::StickToCamera);
+        let mut rect = window_l.add_rectangle(50.0, 150.0);
+        rect.set_color(0.0, 1.0, 0.0);
+    }
+
 
     let ref mut world = World::new();
-    world.insert(GameState::new());
+    world.insert(GameState::new(window.borrow()));
 
     let ref mut dispatcher = DispatcherBuilder::new()
         .with(EventSystem, "events", &[])
         .with(EntityCreatorSystem, "entites", &["events"])
         .with(PhysicsSystem::default(), "physics", &["entites"])
         .with_thread_local(InputSystem::new(
-            Rc::clone( &window),
+            Rc::clone(&window),
         ))
         .with_thread_local(RenderingSystem::new(
             Rc::clone(&window),

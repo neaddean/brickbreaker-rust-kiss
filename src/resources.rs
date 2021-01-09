@@ -20,7 +20,7 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub fn new() -> Self {
+    pub fn new(window: Window) -> Self {
         GameState {
             this_instant: Instant::now(),
             last_instant: Instant::now(),
