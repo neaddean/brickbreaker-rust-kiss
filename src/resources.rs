@@ -3,15 +3,13 @@ use std::time::{Duration, Instant};
 
 #[derive(Default)]
 pub struct EventQueue {
-    pub events: Vec<crate::events::Event>,
+    pub events: Vec<crate::systems::event_types::Event>,
 }
 
 pub type EntityQueue = Vec<crate::entities::EntityType>;
 
 pub struct GameState {
     pub show_fps: bool,
-    // pub show_debug: bool,
-    // pub continuing: bool,
     pub sw_frame_limiter: bool,
     pub sw_frame_limit_fps: f32,
     pub screen_size: (f32, f32),

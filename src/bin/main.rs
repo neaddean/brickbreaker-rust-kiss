@@ -5,14 +5,17 @@ use kiss3d::light::Light;
 use kiss3d::window::Window;
 use specs::{DispatcherBuilder, World, WorldExt};
 
-use balz::resources::GameState;
+use balz::resources::{GameState, EntityQueue, AssetCache};
 use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
 use ggez::ContextBuilder;
+use balz::entities;
 
 fn main() {
-    let mut window = Window::new("asdf");
-    let mut camera = kiss3d::planar_camera::FixedView::new();
+    let ref mut window = Window::new("asdf");
+    // let mut camera = kiss3d::planar_camera::FixedView::new();
     window.set_light(Light::StickToCamera);
+
+    let mut window = Rc::new(RefCell::new(window));
 
     let ref mut world = World::new();
     world.insert(GameState::new());
@@ -22,10 +25,10 @@ fn main() {
         .with(EntityCreatorSystem, "entites", &["events"])
         .with(PhysicsSystem::default(), "physics", &["entites"])
         .with_thread_local(InputSystem::new(
-            event_loop,
+            Rc::clone(&window),
         ))
         .with_thread_local(RenderingSystem::new(
-            Rc::clone(&ctx),
+            Rc::clone(&window),
         ))
         .build();
 

@@ -2,33 +2,23 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use ggez::graphics::spritebatch::SpriteBatch;
-use ggez::nalgebra as na;
-use ggez::{graphics, Context};
 use itertools::Itertools;
+use kiss3d::window::Window;
 use specs::{join::Join, Read, ReadStorage, System, WriteExpect};
 
 use crate::components::*;
-use crate::constants::SW_FRAME_RATE_DURATION;
-use crate::{resources, ImGuiWrapper};
 
 pub struct RenderingSystem<'a> {
-    canvas: Canvas,
+    window: Rc<RefCell<&'a mut Window>>,
     accum: f32,
 }
 
-    let draw_colour = na::Point3::new(0.5, 1.0, 0.5);
-    let mut last_pos = na::Point2::new(0.0f32, 0.0f32);
-    let mut sel_pos = na::Point2::new(0.0f32, 0.0f32);
-
 impl<'a> RenderingSystem<'a> {
     pub fn new(
-        ctx: Rc<RefCell<&'a mut Context>>,
-        imgui_wrapper: Rc<RefCell<&'a mut ImGuiWrapper>>,
+        window: Rc<RefCell<&'a mut Window>>,
     ) -> Self {
         RenderingSystem {
-            ctx,
-            imgui_wrapper,
+            window,
             accum: 0.0,
         }
     }
@@ -36,10 +26,6 @@ impl<'a> RenderingSystem<'a> {
 
 impl RenderingSystem<'_> {
     fn draw_text(&mut self, text_string: &str, x: f32, y: f32, color: graphics::Color) -> f32 {
-        let text = graphics::Text::new(text_string);
-        let dimensions = na::Point2::new(x, y);
-        graphics::queue_text(*self.ctx.borrow_mut(), &text, dimensions, Some(color));
-        text.height(*self.ctx.borrow_mut()) as f32
     }
 }
 
@@ -103,7 +89,7 @@ impl<'a> System<'a> for RenderingSystem<'_> {
                         &sprite_batch,
                         graphics::DrawParam::new(),
                     )
-                    .unwrap();
+                        .unwrap();
                 }
             }
             let text_line: f32 = 0.0;
@@ -129,7 +115,7 @@ impl<'a> System<'a> for RenderingSystem<'_> {
                 None,
                 graphics::FilterMode::Linear,
             )
-            .unwrap();
+                .unwrap();
 
             if game_state.show_debug {
                 self.imgui_wrapper

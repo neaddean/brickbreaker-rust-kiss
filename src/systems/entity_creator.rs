@@ -1,11 +1,11 @@
 use specs::{Entities, Read, ReadExpect, System, Write, WriteStorage};
 
-use crate::resources::AssetCache;
 use crate::{
     components::*,
     entities::EntityType,
     resources::{EntityQueue, GameState},
 };
+use crate::resources::AssetCache;
 
 pub struct EntityCreatorSystem;
 

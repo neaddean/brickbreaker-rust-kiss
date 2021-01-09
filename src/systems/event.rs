@@ -1,14 +1,14 @@
-use ggez::input::keyboard::{KeyCode, KeyMods};
-use rand::{thread_rng, Rng};
+use kiss3d::event::{Key, Modifiers};
+use rand::{Rng, thread_rng};
 use specs::{join::Join, ReadStorage, System, Write, WriteExpect, WriteStorage};
 
-use crate::entities::EntityType;
-use crate::resources::GameState;
 use crate::{
     components::*,
-    events::Event,
     resources::{EntityQueue, EventQueue},
 };
+use crate::entities::EntityType;
+use crate::resources::GameState;
+use crate::systems::event_types::Event;
 
 pub struct EventSystem;
 
@@ -38,50 +38,50 @@ impl<'a> System<'a> for EventSystem {
 
         for event in event_queue.events.drain(..) {
             // println!("New event: {:?}", event);
-            match event {
+            match event.value {
                 Event::KeyDown(key_code, _key_mods, _is_repeated) => {
                     match (key_code, _is_repeated, _key_mods) {
-                        (KeyCode::Tab, false, KeyMods::SHIFT) => {
+                        (Key::Tab, false, Modifiers::SHIFT) => {
                             game_state.show_debug ^= true;
                         }
-                        (KeyCode::Up, ..) => {
+                        (Key::Up, ..) => {
                             for (vel, _) in (&mut velocities, &balls).join() {
                                 vel.x += 120.0 * num::signum(vel.x);
                                 vel.y += 120.0 * num::signum(vel.y);
                             }
                         }
-                        (KeyCode::Down, ..) => {
+                        (Key::Down, ..) => {
                             for (vel, _) in (&mut velocities, &balls).join() {
                                 vel.x -= 120.0 * num::signum(vel.x);
                                 vel.y -= 120.0 * num::signum(vel.y);
                             }
                         }
-                        (KeyCode::Right, false, ..) => {
+                        (Key::Right, false, ..) => {
                             for (vel, _) in (&mut velocities, &bars).join() {
                                 vel.x = 600.0;
                             }
                         }
-                        (KeyCode::Left, false, ..) => {
+                        (Key::Left, false, ..) => {
                             for (vel, _) in (&mut velocities, &bars).join() {
                                 vel.x = -600.0;
                             }
                         }
-                        (KeyCode::Space, ..) => {
+                        (Key::Space, ..) => {
                             entity_queue.push(EntityType::Ball {
                                 x: thread_rng().gen_range(-120.0..120.0),
                                 y: thread_rng().gen_range(-120.0..120.0),
                             });
                         }
-                        (KeyCode::F, false, KeyMods::CTRL) => {
+                        (Key::F, false, Modifiers::CTRL) => {
                             game_state.show_fps ^= true;
                         }
-                        (KeyCode::L, false, KeyMods::CTRL) => {
+                        (Key::L, false, Modifiers::CTRL) => {
                             game_state.sw_frame_limiter ^= true;
                         }
-                        (KeyCode::Escape, false, _) => {
+                        (Key::Escape, false, _) => {
                             game_state.continuing = false;
                         }
-                        (KeyCode::B, _, _) => {
+                        (Key::B, ..) => {
                             entity_queue.push(EntityType::Brick {
                                 x: thread_rng().gen_range(0.0..800.0),
                                 y: thread_rng().gen_range(0.0..600.0),
@@ -92,12 +92,12 @@ impl<'a> System<'a> for EventSystem {
                     }
                 }
                 Event::KeyUp(key_code, _key_mods) => match key_code {
-                    KeyCode::Right => {
+                    Key::Right => {
                         for (vel, _) in (&mut velocities, &bars).join() {
                             vel.x = 0.0;
                         }
                     }
-                    KeyCode::Left => {
+                    Key::Left => {
                         for (vel, _) in (&mut velocities, &bars).join() {
                             vel.x = 0.0;
                         }
