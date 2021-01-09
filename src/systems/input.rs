@@ -10,7 +10,7 @@ use crate::systems::event_types::Event::{KeyDown, KeyUp};
 
 pub struct InputSystem<'a> {
     window: Rc<RefCell<&'a mut Window>>,
-    last_pressed_key: Option<Key>,
+    last_pressed: Option<Key>,
 }
 
 impl<'a> InputSystem<'a> {
@@ -19,7 +19,7 @@ impl<'a> InputSystem<'a> {
     ) -> Self {
         InputSystem {
             window,
-            last_pressed_key: None,
+            last_pressed: None,
         }
     }
 }
@@ -31,12 +31,12 @@ impl<'a> System<'a> for InputSystem<'_> {
         let mut event_queue = data;
         let ref mut window = self.window.borrow_mut();
 
-        for mut event in window.events().iter() {
+        for event in window.events().iter() {
             println!("{:?}", event.value);
             match event.value {
                 WindowEvent::Key(keycode, Action::Press, keymods) => {
                     let repeated = if self.last_pressed.is_some() {
-                        self.last_pressed == keycode
+                        self.last_pressed == Some(keycode)
                     } else {
                         false
                     };

@@ -36,19 +36,20 @@ impl<'a> System<'a> for EntityCreatorSystem {
             mut bar_storage,
             mut brick_storage,
             game_state,
-            asset_cache,
+            _asset_cache,
         ) = data;
 
         for entity_to_create in entity_queue.drain(..) {
             match entity_to_create {
                 EntityType::Ball { x, y } => {
                     let asset_name = "/ball.png".to_string();
-                    let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    let dimensions = (10.0, 10.0);
                     entites
                         .build_entity()
                         .with(
                             Ball {
-                                radius: dimensions.w,
+                                radius: dimensions.0,
                             },
                             &mut ball_storage,
                         )
@@ -66,20 +67,21 @@ impl<'a> System<'a> for EntityCreatorSystem {
                 }
                 EntityType::Bar => {
                     let asset_name = "/bar.png".to_string();
-                    let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    let dimensions = (10.0, 10.0);
                     entites
                         .build_entity()
                         .with(
                             Bar {
-                                width: dimensions.w,
-                                height: dimensions.h,
+                                width: dimensions.0,
+                                height: dimensions.1,
                             },
                             &mut bar_storage,
                         )
                         .with(
                             Position {
-                                x: game_state.screen_size.0 / 2.0 - dimensions.w / 2.0,
-                                y: game_state.screen_size.1 - dimensions.h / 2.0,
+                                x: game_state.screen_size.0 / 2.0 - dimensions.1 / 2.0,
+                                y: game_state.screen_size.1 - dimensions.1 / 2.0,
                                 z: 5,
                             },
                             &mut positions,
@@ -90,13 +92,14 @@ impl<'a> System<'a> for EntityCreatorSystem {
                 }
                 EntityType::Brick { x, y, health } => {
                     let asset_name = "/green1.png".to_string();
-                    let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    let dimensions = (10.0, 10.0);
                     entites
                         .build_entity()
                         .with(
                             Brick {
-                                width: dimensions.w,
-                                height: dimensions.h,
+                                width: dimensions.0,
+                                height: dimensions.1,
                                 health,
                             },
                             &mut brick_storage,

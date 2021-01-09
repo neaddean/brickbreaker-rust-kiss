@@ -7,7 +7,6 @@ use specs::{DispatcherBuilder, World, WorldExt};
 
 use balz::resources::{GameState, EntityQueue, AssetCache};
 use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
-use ggez::ContextBuilder;
 use balz::entities;
 
 fn main() {
@@ -15,7 +14,7 @@ fn main() {
     // let mut camera = kiss3d::planar_camera::FixedView::new();
     window.set_light(Light::StickToCamera);
 
-    let mut window = Rc::new(RefCell::new(window));
+    let window = Rc::new(RefCell::new(window));
 
     let ref mut world = World::new();
     world.insert(GameState::new());
@@ -55,8 +54,8 @@ fn main() {
     }
     {
         let mut asset_cache = world.write_resource::<AssetCache>();
-        asset_cache.load_assets(*ctx.borrow_mut());
+        asset_cache.load_assets();
     }
 
-    bricktest::gameloop::run(dispatcher, world);
+    balz::gameloop::run(dispatcher, world);
 }

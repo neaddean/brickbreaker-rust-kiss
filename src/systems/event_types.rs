@@ -1,4 +1,4 @@
-use kiss3d::event::{MouseButton, Key, Modifiers};
+use kiss3d::event::{Key, Modifiers};
 
 #[derive(Debug)]
 pub enum Event {

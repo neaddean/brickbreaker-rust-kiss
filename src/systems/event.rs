@@ -38,11 +38,11 @@ impl<'a> System<'a> for EventSystem {
 
         for event in event_queue.events.drain(..) {
             // println!("New event: {:?}", event);
-            match event.value {
+            match event {
                 Event::KeyDown(key_code, _key_mods, _is_repeated) => {
                     match (key_code, _is_repeated, _key_mods) {
-                        (Key::Tab, false, Modifiers::SHIFT) => {
-                            game_state.show_debug ^= true;
+                        (Key::Tab, false, Modifiers::Shift) => {
+                            // game_state.show_debug ^= true;
                         }
                         (Key::Up, ..) => {
                             for (vel, _) in (&mut velocities, &balls).join() {
@@ -72,10 +72,10 @@ impl<'a> System<'a> for EventSystem {
                                 y: thread_rng().gen_range(-120.0..120.0),
                             });
                         }
-                        (Key::F, false, Modifiers::CTRL) => {
+                        (Key::F, false, Modifiers::Control) => {
                             game_state.show_fps ^= true;
                         }
-                        (Key::L, false, Modifiers::CTRL) => {
+                        (Key::L, false, Modifiers::Control) => {
                             game_state.sw_frame_limiter ^= true;
                         }
                         (Key::Escape, false, _) => {
@@ -107,6 +107,7 @@ impl<'a> System<'a> for EventSystem {
                 Event::CloseGame => {
                     game_state.continuing = false;
                 }
+                Event::WindowSize(_, _) => {}
             }
         }
     }
