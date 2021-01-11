@@ -1,5 +1,5 @@
 
-use specs::{Entities, ReadExpect, System, Write, WriteStorage, ReadStorage};
+use specs::{Entities, System, Write, ReadStorage};
 use std::cell::RefCell;
 use std::rc::Rc;
 

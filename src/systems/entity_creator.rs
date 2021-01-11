@@ -125,7 +125,6 @@ impl<'a> System<'a> for EntityCreatorSystem {
                         .with(Renderable { gfx_id }, &mut renderables)
                         .build();
                 }
-                _ => {}
             }
         }
     }
