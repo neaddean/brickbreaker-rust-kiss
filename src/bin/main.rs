@@ -1,40 +1,35 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use kiss3d::light::Light;
-use kiss3d::window::Window;
+use kiss3d::window::{CanvasSetup, NumSamples, Window};
 use specs::{DispatcherBuilder, World, WorldExt};
 
+use balz::context::GameContext;
 use balz::entities;
 use balz::resources::{AssetCache, EntityQueue, GameState};
 use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
-use std::borrow::Borrow;
 
 fn main() {
-    let window = Window::new("asdf");
-    let window = Rc::new(RefCell::new(window));
-    // let mut camera = kiss3d::planar_camera::FixedView::new();
+    let canvas_config = CanvasSetup { vsync: false, samples: NumSamples::Two };
+    let window = Window::new_with_setup("asdf", 800, 600, canvas_config);
+    let game_state = Rc::new(RefCell::new(GameContext::new(window)));
     {
-        let mut window_l = window.borrow_mut();
-        // window_l.set_light(Light::StickToCamera);
-        let mut rect = window_l.add_rectangle(50.0, 150.0);
+        let ref mut game_state = game_state.borrow_mut();
+        let ref mut window = game_state.window_mut();
+        let mut rect = window.add_rectangle(50.0, 150.0);
         rect.set_color(0.0, 1.0, 0.0);
+        game_state.store_gfx(rect);
     }
 
-
     let ref mut world = World::new();
-    world.insert(GameState::new(window.borrow()));
+    world.insert(GameState::new(&mut game_state.borrow_mut()));
 
     let ref mut dispatcher = DispatcherBuilder::new()
         .with(EventSystem, "events", &[])
-        .with(EntityCreatorSystem, "entites", &["events"])
-        .with(PhysicsSystem::default(), "physics", &["entites"])
-        .with_thread_local(InputSystem::new(
-            Rc::clone(&window),
-        ))
-        .with_thread_local(RenderingSystem::new(
-            Rc::clone(&window),
-        ))
+        .with_thread_local(EntityCreatorSystem)
+        .with_thread_local(PhysicsSystem::default())
+        .with_thread_local(InputSystem::new(Rc::clone(&game_state)))
+        .with_thread_local(RenderingSystem::new(Rc::clone(&game_state)))
         .build();
 
     dispatcher.setup(world);

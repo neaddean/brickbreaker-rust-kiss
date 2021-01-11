@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
+use crate::context::GameContext;
+
 #[derive(Default)]
 pub struct EventQueue {
     pub events: Vec<crate::systems::event_types::Event>,
@@ -20,14 +22,16 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub fn new(window: Window) -> Self {
+    pub fn new(game_context: &mut GameContext) -> Self {
+        // let mut game_context = game_context.borrow_mut();
+        let window = game_context.window();
         GameState {
             this_instant: Instant::now(),
             last_instant: Instant::now(),
             show_fps: true,
             sw_frame_limiter: false,
             sw_frame_limit_fps: 60.0,
-            screen_size: (800.0, 600.0),
+            screen_size: (window.width() as f32, window.height() as f32),
             this_duration: Default::default(),
             continuing: true,
         }
@@ -53,15 +57,12 @@ pub struct AssetCache {
 
 impl AssetCache {
     pub fn load_assets(&mut self) {
-        for _path in std::fs::read_dir("C:/users/dean/git/bouncing-balls/resources")
-            // .iter()
-            // .filter(|p| p.path().ends_with(".png"))
+        for entry in std::fs::read_dir("C:/users/dean/rust/bouncing-balls/resources")
+        .unwrap()
         {
-            // println!("Loading asset: {:?}", path?.path());
-            // self.cache.insert(
-            //     String::from(path?.path()),
-            //     String::from(path?.path()),
-            // );
+            let entry = entry.unwrap();
+            let path = entry.path();
+            println!("Loading asset: {:?}", path);
         }
     }
 }

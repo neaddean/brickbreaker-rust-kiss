@@ -3,7 +3,7 @@ use specs::{Component, VecStorage};
 #[derive(Component)]
 #[storage(VecStorage)]
 pub struct Renderable {
-    pub asset_name: String,
+    pub gfx_id: u32,
 }
 
 #[derive(Component)]

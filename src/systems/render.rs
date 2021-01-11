@@ -1,23 +1,24 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use kiss3d::window::Window;
+
 use specs::{Read, ReadStorage, System, WriteExpect};
 
 use crate::components::*;
 use crate::resources;
+use crate::context::GameContext;
 
 pub struct RenderingSystem {
-    window: Rc<RefCell<Window>>,
+    game_context: Rc<RefCell<GameContext>>,
     accum: f32,
 }
 
 impl RenderingSystem {
     pub fn new(
-        window: Rc<RefCell<Window>>,
+        game_context: Rc<RefCell<GameContext>>,
     ) -> Self {
         RenderingSystem {
-            window,
+            game_context,
             accum: 0.0,
         }
     }
@@ -38,7 +39,8 @@ impl<'a> System<'a> for RenderingSystem {
             mut game_state,
         ) = data;
 
-        let ref mut window = self.window.borrow_mut();
+        let mut game_context = self.game_context.borrow_mut();
+        let ref mut window = game_context.window_mut();
         if game_state.sw_frame_limiter {
             self.accum += game_state.this_duration().as_secs_f32();
         } else {

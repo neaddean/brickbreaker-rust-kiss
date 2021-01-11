@@ -2,23 +2,24 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use kiss3d::event::{Action, Key, WindowEvent};
-use kiss3d::window::Window;
+
 use specs::{System, Write};
 
-use crate::resources::EventQueue;
+use crate::resources::{EventQueue};
 use crate::systems::event_types::Event::{KeyDown, KeyUp};
+use crate::context::GameContext;
 
 pub struct InputSystem {
-    window: Rc<RefCell<Window>>,
+    game_context: Rc<RefCell<GameContext>>,
     last_pressed: Option<Key>,
 }
 
 impl InputSystem {
     pub fn new(
-        window: Rc<RefCell<Window>>,
+        game_context: Rc<RefCell<GameContext>>,
     ) -> Self {
         InputSystem {
-            window,
+            game_context,
             last_pressed: None,
         }
     }
@@ -29,10 +30,12 @@ impl<'a> System<'a> for InputSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let mut event_queue = data;
-        let ref mut window = self.window.borrow_mut();
+
+        let game_context = self.game_context.borrow_mut();
+        let window = game_context.window();
 
         for event in window.events().iter() {
-            println!("{:?}", event.value);
+            // println!("{:?}", event.value);
             match event.value {
                 WindowEvent::Key(keycode, Action::Press, keymods) => {
                     let repeated = if self.last_pressed.is_some() {

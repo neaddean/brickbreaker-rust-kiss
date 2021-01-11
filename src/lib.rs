@@ -7,4 +7,5 @@ pub mod entities;
 pub mod gameloop;
 pub mod resources;
 pub mod systems;
+pub mod context;
 

@@ -31,7 +31,7 @@ impl<'a> System<'a> for EntityCreatorSystem {
             entites,
             mut velocities,
             mut positions,
-            mut renderables,
+            _renderables,
             mut ball_storage,
             mut bar_storage,
             mut brick_storage,
@@ -42,7 +42,7 @@ impl<'a> System<'a> for EntityCreatorSystem {
         for entity_to_create in entity_queue.drain(..) {
             match entity_to_create {
                 EntityType::Ball { x, y } => {
-                    let asset_name = "/ball.png".to_string();
+                    let _asset_name = "/ball.png".to_string();
                     // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
                     let dimensions = (10.0, 10.0);
                     entites
@@ -62,11 +62,11 @@ impl<'a> System<'a> for EntityCreatorSystem {
                             &mut positions,
                         )
                         .with(Velocity { x, y }, &mut velocities)
-                        .with(Renderable { asset_name }, &mut renderables)
+                        // .with(Renderable { asset_name }, &mut renderables)
                         .build();
                 }
                 EntityType::Bar => {
-                    let asset_name = "/bar.png".to_string();
+                    let _asset_name = "/bar.png".to_string();
                     // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
                     let dimensions = (10.0, 10.0);
                     entites
@@ -87,11 +87,11 @@ impl<'a> System<'a> for EntityCreatorSystem {
                             &mut positions,
                         )
                         .with(Velocity { x: 0.0, y: 0.0 }, &mut velocities)
-                        .with(Renderable { asset_name }, &mut renderables)
+                        // .with(Renderable { asset_name }, &mut renderables)
                         .build();
                 }
                 EntityType::Brick { x, y, health } => {
-                    let asset_name = "/green1.png".to_string();
+                    let _asset_name = "/green1.png".to_string();
                     // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
                     let dimensions = (10.0, 10.0);
                     entites
@@ -105,7 +105,7 @@ impl<'a> System<'a> for EntityCreatorSystem {
                             &mut brick_storage,
                         )
                         .with(Position { x, y, z: 9 }, &mut positions)
-                        .with(Renderable { asset_name }, &mut renderables)
+                        // .with(Renderable { asset_name }, &mut renderables)
                         .build();
                 }
             }
