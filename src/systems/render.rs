@@ -39,7 +39,7 @@ impl<'a> System<'a> for RenderingSystem {
             mut game_state,
         ) = data;
 
-        let mut game_context = self.game_context.borrow_mut();
+        let ref mut game_context = self.game_context.borrow_mut();
         let ref mut window = game_context.window_mut();
         if game_state.sw_frame_limiter {
             self.accum += game_state.this_duration().as_secs_f32();

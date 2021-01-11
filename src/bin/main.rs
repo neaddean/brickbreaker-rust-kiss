@@ -12,24 +12,24 @@ use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem
 fn main() {
     let canvas_config = CanvasSetup { vsync: false, samples: NumSamples::Two };
     let window = Window::new_with_setup("asdf", 800, 600, canvas_config);
-    let game_state = Rc::new(RefCell::new(GameContext::new(window)));
+    let game_context = Rc::new(RefCell::new(GameContext::new(window)));
     {
-        let ref mut game_state = game_state.borrow_mut();
-        let ref mut window = game_state.window_mut();
-        let mut rect = window.add_rectangle(50.0, 150.0);
-        rect.set_color(0.0, 1.0, 0.0);
-        game_state.store_gfx(rect);
+        let mut game_context = game_context.borrow_mut();
+        let window = game_context.window_mut();
+        let mut rect = window.add_rectangle(250.0, 650.0);
+        rect.set_color(1.0, 0.0, 0.25);
+        game_context.store_gfx(rect);
     }
 
     let ref mut world = World::new();
-    world.insert(GameState::new(&mut game_state.borrow_mut()));
+    world.insert(GameState::new(&mut game_context.borrow_mut()));
 
     let ref mut dispatcher = DispatcherBuilder::new()
         .with(EventSystem, "events", &[])
-        .with_thread_local(EntityCreatorSystem)
+        .with_thread_local(EntityCreatorSystem::new(Rc::clone(&game_context)))
         .with_thread_local(PhysicsSystem::default())
-        .with_thread_local(InputSystem::new(Rc::clone(&game_state)))
-        .with_thread_local(RenderingSystem::new(Rc::clone(&game_state)))
+        .with_thread_local(InputSystem::new(Rc::clone(&game_context)))
+        .with_thread_local(RenderingSystem::new(Rc::clone(&game_context)))
         .build();
 
     dispatcher.setup(world);

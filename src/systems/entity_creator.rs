@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use specs::{Entities, Read, ReadExpect, System, Write, WriteStorage};
 
 use crate::{
@@ -5,9 +8,22 @@ use crate::{
     entities::EntityType,
     resources::{EntityQueue, GameState},
 };
+use crate::context::GameContext;
 use crate::resources::AssetCache;
 
-pub struct EntityCreatorSystem;
+pub struct EntityCreatorSystem {
+    game_context: Rc<RefCell<GameContext>>,
+}
+
+impl EntityCreatorSystem {
+    pub fn new(
+        game_context: Rc<RefCell<GameContext>>,
+    ) -> Self {
+        EntityCreatorSystem {
+            game_context,
+        }
+    }
+}
 
 // System implementation
 impl<'a> System<'a> for EntityCreatorSystem {
@@ -31,7 +47,7 @@ impl<'a> System<'a> for EntityCreatorSystem {
             entites,
             mut velocities,
             mut positions,
-            _renderables,
+            mut renderables,
             mut ball_storage,
             mut bar_storage,
             mut brick_storage,
@@ -39,11 +55,17 @@ impl<'a> System<'a> for EntityCreatorSystem {
             _asset_cache,
         ) = data;
 
+        let ref mut game_context = self.game_context.borrow_mut();
         for entity_to_create in entity_queue.drain(..) {
             match entity_to_create {
                 EntityType::Ball { x, y } => {
-                    let _asset_name = "/ball.png".to_string();
+                    // let _asset_name = "/ball.png".to_string();
                     // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
+                    let mut rect = game_context.window_mut().add_rectangle(50.0, 150.0);
+                    rect.set_color(0.0, 1.0, 0.0);
+                    game_context.store_gfx(rect);
+
+                    // let gfx_id = 0;
                     let dimensions = (10.0, 10.0);
                     entites
                         .build_entity()
@@ -62,52 +84,10 @@ impl<'a> System<'a> for EntityCreatorSystem {
                             &mut positions,
                         )
                         .with(Velocity { x, y }, &mut velocities)
-                        // .with(Renderable { asset_name }, &mut renderables)
+                        .with(Renderable { gfx_id: 0 }, &mut renderables)
                         .build();
                 }
-                EntityType::Bar => {
-                    let _asset_name = "/bar.png".to_string();
-                    // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
-                    let dimensions = (10.0, 10.0);
-                    entites
-                        .build_entity()
-                        .with(
-                            Bar {
-                                width: dimensions.0,
-                                height: dimensions.1,
-                            },
-                            &mut bar_storage,
-                        )
-                        .with(
-                            Position {
-                                x: game_state.screen_size.0 / 2.0 - dimensions.1 / 2.0,
-                                y: game_state.screen_size.1 - dimensions.1 / 2.0,
-                                z: 5,
-                            },
-                            &mut positions,
-                        )
-                        .with(Velocity { x: 0.0, y: 0.0 }, &mut velocities)
-                        // .with(Renderable { asset_name }, &mut renderables)
-                        .build();
-                }
-                EntityType::Brick { x, y, health } => {
-                    let _asset_name = "/green1.png".to_string();
-                    // let dimensions = asset_cache.cache.get(&asset_name).unwrap().dimensions();
-                    let dimensions = (10.0, 10.0);
-                    entites
-                        .build_entity()
-                        .with(
-                            Brick {
-                                width: dimensions.0,
-                                height: dimensions.1,
-                                health,
-                            },
-                            &mut brick_storage,
-                        )
-                        .with(Position { x, y, z: 9 }, &mut positions)
-                        // .with(Renderable { asset_name }, &mut renderables)
-                        .build();
-                }
+                _ => {}
             }
         }
     }
