@@ -1,14 +1,14 @@
-use std::borrow::Borrow;
+
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use num::traits::Pow;
+
 use specs::{Entities, join::Join, ReadExpect, ReadStorage, System, WriteStorage};
 use nalgebra as na;
 use crate::components::*;
-use crate::constants::SIMULATION_DURATION;
+
 use crate::context::GameContext;
-use crate::resources;
+
 
 pub struct UpdateRenderablesSystem {
     game_context: Rc<RefCell<GameContext>>,

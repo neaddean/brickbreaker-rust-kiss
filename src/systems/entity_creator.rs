@@ -10,7 +10,7 @@ use crate::{
     resources::{EntityQueue, GameState},
 };
 use crate::context::GameContext;
-use crate::resources::EntityRemovalQueue;
+
 
 pub struct EntityCreatorSystem {
     game_context: Rc<RefCell<GameContext>>,
@@ -86,7 +86,7 @@ impl<'a> System<'a> for EntityCreatorSystem {
                     let dimensions = (180.0, 40.0);
                     let mut rect = game_context.window_mut().add_rectangle(dimensions.0, dimensions.1);
                     rect.set_texture_with_name("bar.png");
-                    let mut origin = na::geometry::Translation2 {
+                    let origin = na::geometry::Translation2 {
                         vector: na::Vector2::new(0.0, -game_state.screen_size.1 / 4.0 + dimensions.1 / 2.0)
                     };
                     rect.set_local_translation(na::geometry::Translation2::from(origin));
@@ -109,7 +109,7 @@ impl<'a> System<'a> for EntityCreatorSystem {
                     let dimensions = (120.0, 40.0);
                     let mut rect = game_context.window_mut().add_rectangle(dimensions.0, dimensions.1);
                     rect.set_texture_with_name("green1.png");
-                    let mut origin = na::geometry::Translation2 {
+                    let origin = na::geometry::Translation2 {
                         vector: na::Vector2::new(x, y)
                     };
                     rect.set_local_translation(na::geometry::Translation2::from(origin));

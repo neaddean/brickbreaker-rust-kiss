@@ -1,12 +1,10 @@
-use nalgebra as na;
+
 use specs::{Entities, ReadExpect, System, Write, WriteStorage, ReadStorage};
 use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
     components::*,
-    entities::EntityType,
-    resources::{EntityQueue, GameState},
 };
 use crate::context::GameContext;
 use crate::resources::EntityRemovalQueue;
