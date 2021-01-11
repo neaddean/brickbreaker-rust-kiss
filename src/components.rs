@@ -32,7 +32,6 @@ pub struct Brick {
 pub struct Position {
     pub x: f32,
     pub y: f32,
-    pub z: u8,
 }
 
 #[derive(Component, Default, Copy, Clone)]

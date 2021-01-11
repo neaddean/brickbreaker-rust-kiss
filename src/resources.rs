@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
 use crate::context::GameContext;
@@ -47,22 +46,5 @@ impl GameState {
 
     pub fn this_duration(&self) -> Duration {
         self.this_duration
-    }
-}
-
-#[derive(Default)]
-pub struct AssetCache {
-    pub cache: HashMap<String, String>,
-}
-
-impl AssetCache {
-    pub fn load_assets(&mut self) {
-        for entry in std::fs::read_dir("C:/users/dean/rust/bouncing-balls/resources")
-        .unwrap()
-        {
-            let entry = entry.unwrap();
-            let path = entry.path();
-            println!("Loading asset: {:?}", path);
-        }
     }
 }

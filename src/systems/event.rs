@@ -70,6 +70,7 @@ impl<'a> System<'a> for EventSystem {
                             entity_queue.push(EntityType::Ball {
                                 x: thread_rng().gen_range(-120.0..120.0),
                                 y: thread_rng().gen_range(-120.0..120.0),
+                                r: 25.0,
                             });
                         }
                         (Key::F, false, Modifiers::Control) => {

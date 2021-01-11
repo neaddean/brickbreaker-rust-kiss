@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 
-use specs::{Read, ReadStorage, System, WriteExpect};
+use specs::{ReadStorage, System, WriteExpect};
 
 use crate::components::*;
 use crate::resources;
@@ -28,14 +28,12 @@ impl<'a> System<'a> for RenderingSystem {
     type SystemData = (
         ReadStorage<'a, Position>,
         ReadStorage<'a, Renderable>,
-        Read<'a, resources::AssetCache>,
         WriteExpect<'a, resources::GameState>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
         let (_positions,
             _renderables,
-            _asset_cache,
             mut game_state,
         ) = data;
 

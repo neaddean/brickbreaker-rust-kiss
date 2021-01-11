@@ -1,12 +1,13 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use kiss3d::resource::TextureManager;
 use kiss3d::window::{CanvasSetup, NumSamples, Window};
 use specs::{DispatcherBuilder, World, WorldExt};
 
 use balz::context::GameContext;
 use balz::entities;
-use balz::resources::{AssetCache, EntityQueue, GameState};
+use balz::resources::{EntityQueue, GameState};
 use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
 
 fn main() {
@@ -36,10 +37,10 @@ fn main() {
 
     {
         let mut entity_queue = world.write_resource::<EntityQueue>();
-        entity_queue.push(entities::EntityType::Ball { x: 60.0, y: 100.0 });
-        entity_queue.push(entities::EntityType::Ball { x: 25.0, y: 75.0 });
-        entity_queue.push(entities::EntityType::Ball { x: -15.0, y: 90.0 });
-        entity_queue.push(entities::EntityType::Ball { x: -130.0, y: 20.0 });
+        entity_queue.push(entities::EntityType::Ball { x: 60.0, y: 100.0, r: 25.0 });
+        entity_queue.push(entities::EntityType::Ball { x: 25.0, y: 75.0, r: 25.0 });
+        entity_queue.push(entities::EntityType::Ball { x: -15.0, y: 90.0, r: 25.0 });
+        entity_queue.push(entities::EntityType::Ball { x: -130.0, y: 20.0, r: 25.0 });
         entity_queue.push(entities::EntityType::Bar);
 
         entity_queue.push(entities::EntityType::Brick {
@@ -54,9 +55,21 @@ fn main() {
         });
     }
     {
-        let mut asset_cache = world.write_resource::<AssetCache>();
-        asset_cache.load_assets();
+        let files = std::fs::read_dir("C:/users/dean/rust/bouncing-balls/resources").unwrap();
+        for entry in files
+        {
+            let entry = entry.unwrap();
+            let path = entry.path();
+            let file_name = path.file_name().unwrap().to_str().unwrap();
+            if !file_name.ends_with(".png") {
+                continue;
+            }
+            println!("Loading asset: {:?}", file_name);
+            TextureManager::get_global_manager(|tm|
+                tm.add(entry.path().as_path(), file_name));
+        }
     }
 
     balz::gameloop::run(dispatcher, world);
 }
+

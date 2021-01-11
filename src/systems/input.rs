@@ -35,7 +35,7 @@ impl<'a> System<'a> for InputSystem {
         let window = game_context.window();
 
         for event in window.events().iter() {
-            // println!("{:?}", event.value);
+            println!("{:?}", event.value);
             match event.value {
                 WindowEvent::Key(keycode, Action::Press, keymods) => {
                     let repeated = if self.last_pressed.is_some() {
