@@ -34,8 +34,15 @@ impl GameContext {
         return self.last_assigned_id - 1;
     }
 
-    pub fn get_gfx(&mut self, node_id: &u32) -> RefMut<PlanarSceneNode> {
-        self.gfx_manager.get(node_id)
+    pub fn remove_gfx(&mut self, node_id: u32) {
+        let ref mut node = self.gfx_manager.get(&node_id)
+            .expect("could not find node with")
+            .borrow_mut();
+        self.window.remove_planar_node(node);
+    }
+
+    pub fn get_gfx(&mut self, node_id: u32) -> RefMut<PlanarSceneNode> {
+        self.gfx_manager.get(&node_id)
             .expect("could not find node with")
             .borrow_mut()
     }

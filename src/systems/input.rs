@@ -2,12 +2,11 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use kiss3d::event::{Action, Key, WindowEvent};
-
 use specs::{System, Write};
 
-use crate::resources::{EventQueue};
-use crate::systems::event_types::Event::{KeyDown, KeyUp};
 use crate::context::GameContext;
+use crate::resources::EventQueue;
+use crate::systems::event_types::Event::{KeyDown, KeyUp};
 
 pub struct InputSystem {
     game_context: Rc<RefCell<GameContext>>,
@@ -38,7 +37,12 @@ impl<'a> System<'a> for InputSystem {
             println!("{:?}", event.value);
             match event.value {
                 WindowEvent::Key(keycode, Action::Press, keymods) => {
-                    let repeated = if self.last_pressed.is_some() {
+                    let repeated = if (self.last_pressed.is_some())
+                        & (keycode != Key::LControl)
+                        & (keycode != Key::RControl)
+                        & (keycode != Key::LShift)
+                        & (keycode != Key::RShift)
+                    {
                         self.last_pressed == Some(keycode)
                     } else {
                         false

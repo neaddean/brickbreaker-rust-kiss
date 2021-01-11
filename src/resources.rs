@@ -1,5 +1,7 @@
 use std::time::{Duration, Instant};
 
+use specs;
+
 use crate::context::GameContext;
 
 #[derive(Default)]
@@ -8,6 +10,8 @@ pub struct EventQueue {
 }
 
 pub type EntityQueue = Vec<crate::entities::EntityType>;
+pub type EntityRemovalQueue = Vec<specs::Entity>;
+
 
 pub struct GameState {
     pub show_fps: bool,

@@ -82,11 +82,11 @@ impl<'a> System<'a> for EventSystem {
                         (Key::Escape, false, _) => {
                             game_state.continuing = false;
                         }
-                        (Key::B, ..) => {
+                        (Key::B, false, _) => {
                             entity_queue.push(EntityType::Brick {
-                                x: thread_rng().gen_range(0.0..800.0),
-                                y: thread_rng().gen_range(0.0..600.0),
-                                health: thread_rng().gen_range(0..50),
+                                x: thread_rng().gen_range(-400.0..400.0),
+                                y: thread_rng().gen_range(-300.0..300.0),
+                                health: thread_rng().gen_range(0..15),
                             });
                         }
                         _ => {}

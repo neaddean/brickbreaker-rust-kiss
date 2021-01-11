@@ -8,11 +8,12 @@ use specs::{DispatcherBuilder, World, WorldExt};
 use balz::context::GameContext;
 use balz::entities;
 use balz::resources::{EntityQueue, GameState};
-use balz::systems::{EntityCreatorSystem, EventSystem, InputSystem, PhysicsSystem, RenderingSystem};
+use balz::systems::*;
 
 fn main() {
     let canvas_config = CanvasSetup { vsync: false, samples: NumSamples::Two };
     let window = Window::new_with_setup("asdf", 800, 600, canvas_config);
+    // let window = Window::new("asd");
     let game_context = Rc::new(RefCell::new(GameContext::new(window)));
     {
         let mut game_context = game_context.borrow_mut();
@@ -28,8 +29,10 @@ fn main() {
     let ref mut dispatcher = DispatcherBuilder::new()
         .with(EventSystem, "events", &[])
         .with_thread_local(EntityCreatorSystem::new(Rc::clone(&game_context)))
-        .with_thread_local(PhysicsSystem::default())
+        .with_thread_local(PhysicsSystem::new(Rc::clone(&game_context)))
+        .with_thread_local(EntityRemovalSystem::new(Rc::clone(&game_context)))
         .with_thread_local(InputSystem::new(Rc::clone(&game_context)))
+        .with_thread_local(UpdateRenderablesSystem::new(Rc::clone(&game_context)))
         .with_thread_local(RenderingSystem::new(Rc::clone(&game_context)))
         .build();
 
